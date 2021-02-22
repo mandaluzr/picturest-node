@@ -1,6 +1,13 @@
 const persimon = require('../../utils/persimon');
 const db = persimon('/assets/users.json'); // Relative to the project root
 const userModel = require('./users.model');
+const express = require('express');
+const app = express();
+const { validationResult } = require('express-validator');
+
+      // const = usersUpdated = UserModel.create(req.body);
+      // return res.status(201).json(usersUpdated)
+
 const getAll = async (req, res) => {
   const users = await userModel.all();
   return res.status(200).json(users);
@@ -14,9 +21,14 @@ const getOne = async (req, res) => {
   return res.status(404).end();
 };
 const create = (req, res) => {
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
   const newuser = req.body;
   const usersUpdated = userModel.create(newuser);
   return res.status(201).json(usersUpdated);
+
 };
 const update = (req, res) => {
   const updateduser = req.body;
